@@ -1,10 +1,9 @@
-package com.gmg.nettyserver.object;
+package com.gmg.nettyserver.proto;
 
-import com.gmg.nettyserver.string.StringHandle;
+import com.gmg.nettyserver.object.ObjectHandler;
 import com.netty.im.core.kryo.KryoDecoder;
 import com.netty.im.core.kryo.KryoEncoder;
-import com.netty.im.core.message.MessageDecoder;
-import com.netty.im.core.message.MessageEncoder;
+import com.netty.im.core.proto.MessageProto;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -13,18 +12,13 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.string.StringEncoder;
-import sun.misc.MessageUtils;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 
 /**
- * @author gmg
- * @Title:
- * @Package
- * @Description:
- * @date 2018/8/17  15:04
+ * Created by yr on 2018/8/18.
  */
-public class NettyObjectServer {
-
+public class ProtoServer {
     public void run(int port){
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -34,13 +28,10 @@ public class NettyObjectServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
-                        //实体类传输数据，jdk序列化
-                      /*  ch.pipeline().addLast("decoder", new MessageDecoder());
-                        ch.pipeline().addLast("encoder", new MessageEncoder());*/
-                        //kryo序列化和反序列化
-                        ch.pipeline().addLast("decoder", new KryoDecoder());
-                        ch.pipeline().addLast("encoder", new KryoEncoder());
-                        ch.pipeline().addLast(new ObjectHandler());
+                        //使用protobuf 序列化 反序列化
+                        ch.pipeline().addLast("decoder", new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
+                        ch.pipeline().addLast("encoder", new ProtobufEncoder());
+                        ch.pipeline().addLast(new ServerProtoHandler());
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)

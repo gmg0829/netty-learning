@@ -36,11 +36,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!--<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-all</artifactId>
-			<version>${netty.version}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>com.gmg</groupId>
 			<artifactId>netty-core</artifactId>

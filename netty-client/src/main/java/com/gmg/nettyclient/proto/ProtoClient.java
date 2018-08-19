@@ -1,26 +1,21 @@
-package com.gmg.nettyclient.object;
+package com.gmg.nettyclient.proto;
 
-import com.gmg.nettyclient.string.ClientStringHandler;
+import com.gmg.nettyclient.object.ObjectHandle;
 import com.netty.im.core.kryo.KryoDecoder;
 import com.netty.im.core.kryo.KryoEncoder;
-import com.netty.im.core.message.MessageDecoder;
-import com.netty.im.core.message.MessageEncoder;
+import com.netty.im.core.proto.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 
 /**
- * @author gmg
- * @Title:
- * @Package
- * @Description:
- * @date 2018/8/17  16:53
+ * Created by yr on 2018/8/18.
  */
-public class NettyObjectClient {
+public class ProtoClient {
     private Channel channel;
 
     public Channel conn(String host,int port){
@@ -36,13 +31,10 @@ public class NettyObjectClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
-                        //jdk序列化和反序列化
-                       /* ch.pipeline().addLast("decoder", new MessageDecoder());
-                        ch.pipeline().addLast("encoder", new MessageEncoder());*/
-                       //kryo序列化和反序列化
-                        ch.pipeline().addLast("decoder", new KryoDecoder());
-                        ch.pipeline().addLast("encoder", new KryoEncoder());
-                        ch.pipeline().addLast(new ObjectHandle());
+                        // 实体类传输数据，protobuf序列化
+                        ch.pipeline().addLast("decoder", new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
+                        ch.pipeline().addLast("encoder", new ProtobufEncoder());
+                        ch.pipeline().addLast(new ProtoClientHandler());
                     }
                 });
         try {
