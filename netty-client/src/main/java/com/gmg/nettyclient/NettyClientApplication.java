@@ -1,5 +1,6 @@
 package com.gmg.nettyclient;
 
+import com.gmg.nettyclient.constant.ConnConstant;
 import com.gmg.nettyclient.object.NettyObjectClient;
 import com.gmg.nettyclient.proto.ProtoClient;
 import com.gmg.nettyclient.string.NettyStringClient;
@@ -15,13 +16,12 @@ import java.util.UUID;
 public class NettyClientApplication {
 
 	public static void main(String[] args) {
-		String host="127.0.0.1";
-		int port=2222;
+
 		//传输字符串
-		//Channel channel=new NettyStringClient().conn(host,port);
+		//Channel channel=new NettyStringClient().conn(ConnConstant.host,ConnConstant.port);
 		//channel.writeAndFlush("gmg");
 		//传输对象
-		//Channel channel=new NettyObjectClient().conn(host,port);
+		//Channel channel=new NettyObjectClient().conn(ConnConstant.host,ConnConstant.port);
 		String id=UUID.randomUUID().toString().replaceAll("-", "");
 		Message message=new Message();
 		message.setId(id);
@@ -30,7 +30,7 @@ public class NettyClientApplication {
 		//MessageProto
 		MessageProto.Message protoMessage=MessageProto.Message.newBuilder().
 				setId(id).setContent("gmg").build();
-		Channel channel=new ProtoClient().conn(host,port);
+		Channel channel=new ProtoClient().conn(ConnConstant.host,ConnConstant.port);
 		channel.writeAndFlush(protoMessage);
 		SpringApplication.run(NettyClientApplication.class, args);
 	}

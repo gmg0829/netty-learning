@@ -1,5 +1,6 @@
 package com.gmg.nettyserver;
 
+import com.gmg.nettyserver.http.NettyHttpServer;
 import com.gmg.nettyserver.object.NettyObjectServer;
 import com.gmg.nettyserver.proto.ProtoServer;
 import com.gmg.nettyserver.string.NettyStringServer;
@@ -14,7 +15,8 @@ public class NettyServerApplication {
 		new Thread(()->{
 			//new NettyStringServer().run(port);
 			//new NettyObjectServer().run(port);
-			new ProtoServer().run(port);
+			//new ProtoServer().run(port);
+			new NettyHttpServer().run(port);
 		}).start();
 		SpringApplication.run(NettyServerApplication.class, args);
 	}

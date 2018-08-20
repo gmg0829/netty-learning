@@ -16,7 +16,10 @@ public class ServerProtoHandler extends ChannelInboundHandlerAdapter {
             ConnectionPool.putChannel(message.getId(),ctx);
         }
         System.err.println("server"+message.getContent());
-        ctx.writeAndFlush(message);
+       if(message.getType()==1){
+           ctx.writeAndFlush(MessageProto.Message.newBuilder().setContent("我在线"));
+       }
+
     }
 
     @Override

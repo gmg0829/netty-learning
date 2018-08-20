@@ -11,6 +11,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yr on 2018/8/18.
@@ -31,6 +34,8 @@ public class ProtoClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
+                        //心跳检测
+                        ch.pipeline().addLast("ping",new IdleStateHandler(60, 20, 60 * 10, TimeUnit.SECONDS));
                         // 实体类传输数据，protobuf序列化
                         ch.pipeline().addLast("decoder", new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
                         ch.pipeline().addLast("encoder", new ProtobufEncoder());
@@ -38,9 +43,11 @@ public class ProtoClient {
                     }
                 });
         try {
-            ChannelFuture channelFuture=bootstrap.connect(host, port).sync();
+            ChannelFuture channelFuture=bootstrap.connect(host, port);
+            //重连监听器
+            channelFuture.addListener(new ConnectionListener());
             channel=channelFuture.channel();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
         }
